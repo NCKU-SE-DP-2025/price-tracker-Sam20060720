@@ -20,49 +20,44 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 
-export default {
-    data() {
-        return {
-            username: '',
-            password: '',
-            passwordConfirm: '',
-            errors: {
-                username: '',
-                password: '',
-                passwordConfirm: ''
-            }
-        };
-    },
-    methods: {
-        register() {
-            if (this.validate()) {
-                const userStore = useAuthStore();
-                userStore.register(this.username, this.password);
-            }
-        },
-        validate() {
-            let valid = true;
-            this.errors = { username: '', password: '', passwordConfirm: '' };
+const userStore = useAuthStore();
+const username = ref('');
+const password = ref('');
+const passwordConfirm = ref('');
+const errors = ref({
+    username: '',
+    password: '',
+    passwordConfirm: ''
+});
 
-            if (!this.username.trim()) {
-                this.errors.username = 'Username is required.';
-                valid = false;
-            }
-            if (!this.password) {
-                this.errors.password = 'Password is required.';
-                valid = false;
-            }
-            if (this.password !== this.passwordConfirm) {
-                this.errors.passwordConfirm = 'Passwords do not match!';
-                valid = false;
-            }
-            return valid;
-        }
+const validate = () => {
+    let valid = true;
+    errors.value = { username: '', password: '', passwordConfirm: '' };
+
+    if (!username.value.trim()) {
+        errors.value.username = 'Username is required.';
+        valid = false;
     }
-}
+    if (!password.value) {
+        errors.value.password = 'Password is required.';
+        valid = false;
+    }
+    if (password.value !== passwordConfirm.value) {
+        errors.value.passwordConfirm = 'Passwords do not match!';
+        valid = false;
+    }
+    return valid;
+};
+
+const register = () => {
+    if (validate()) {
+        userStore.register(username.value, password.value);
+    }
+};
 </script>
 
 <style scoped>
@@ -74,7 +69,7 @@ export default {
     box-sizing: border-box;
 }
 
-.error{
+.error {
     color: red;
 
 }
@@ -87,12 +82,12 @@ export default {
     box-shadow: 0 0 10px rgba(0, 0, 0, .1);
 }
 
-form{
+form {
     display: flex;
     flex-direction: column;
 }
 
-form > input{
+form>input {
     margin: .25em 0;
     padding: .5em 1em;
     font-size: 1.2em;
@@ -100,13 +95,13 @@ form > input{
     border-radius: .5em;
 }
 
-.ops{
+.ops {
     margin-top: .5em;
     display: flex;
     justify-content: center;
 }
 
-.ops > button{
+.ops>button {
     padding: .5em 1em;
     margin: 0 .5em;
     font-size: 1.2em;
@@ -115,13 +110,13 @@ form > input{
     cursor: pointer;
 }
 
-#register{
+#register {
     display: inline-block;
     background-color: #5bc0de;
     color: #fff;
 }
 
-#register:hover{
+#register:hover {
     background-color: #46b8da;
 }
 </style>

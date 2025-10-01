@@ -7,7 +7,9 @@
                 <input v-model="password" type="password" placeholder="Password" required>
                 <p v-if="loginError" class="error">{{ loginError }}</p>
                 <div class="ops">
-                    <button type="button" id="register"><RouterLink to="/register">註冊</RouterLink></button>
+                    <button type="button" id="register">
+                        <RouterLink to="/register">註冊</RouterLink>
+                    </button>
                     <button type="submit" id="login">登入</button>
                 </div>
             </form>
@@ -15,29 +17,21 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 
-export default {
-    data() {
-        return {
-            username: '',
-            password: ''
-        };
-    },
-    methods: {
-        login() {
-            const userStore = useAuthStore();
-            userStore.login(this.username, this.password);
-        }
-    },
-    computed: {
-        loginError(){
-            const userStore = useAuthStore();
-            return userStore.getLoginError;
-        }
-    }
-}
+const userStore = useAuthStore();
+const username = ref('');
+const password = ref('');
+
+const loginError = computed(() => {
+    return userStore.getLoginError;
+});
+
+const login = () => {
+    userStore.login(username.value, password.value);
+};
 </script>
 
 <style scoped>
@@ -49,7 +43,7 @@ export default {
     box-sizing: border-box;
 }
 
-.error{
+.error {
     color: red;
 }
 
@@ -61,12 +55,12 @@ export default {
     box-shadow: 0 0 10px rgba(0, 0, 0, .1);
 }
 
-form{
+form {
     display: flex;
     flex-direction: column;
 }
 
-form > input{
+form>input {
     margin: .25em 0;
     padding: .5em 1em;
     font-size: 1.2em;
@@ -74,13 +68,13 @@ form > input{
     border-radius: .5em;
 }
 
-.ops{
+.ops {
     margin-top: .5em;
     display: flex;
     justify-content: center;
 }
 
-.ops > button{
+.ops>button {
     padding: .5em 1em;
     margin: 0 .5em;
     font-size: 1.2em;
@@ -89,26 +83,26 @@ form > input{
     cursor: pointer;
 }
 
-#register{
+#register {
     background-color: #F3F3F3;
     border: 1px solid #ccc;
 }
 
-#register > a{
+#register>a {
     text-decoration: none;
     color: #000;
 }
 
-#register:hover{
+#register:hover {
     background-color: #e8e8e8;
 }
 
-#login{
+#login {
     background-color: #5bc0de;
     color: #fff;
 }
 
-#login:hover{
+#login:hover {
     background-color: #46b8da;
 }
 </style>
