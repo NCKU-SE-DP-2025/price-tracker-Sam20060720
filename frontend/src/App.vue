@@ -3,15 +3,8 @@
   <RouterView class="render"></RouterView>
 </template>
 
-<script>
-// import { RouterView } from 'vue-router';
+<script setup>
 import NavBar from './components/NavBar.vue'
-export default {
-  name: 'App',
-  components: {
-    NavBar,
-  }
-}
 </script>
 
 <style>
@@ -22,12 +15,14 @@ export default {
   text-align: center;
   color: #2c3e50;
 }
-.navbar{
+
+.navbar {
   z-index: 1000;
   position: fixed;
   top: 0;
 }
-.render{
+
+.render {
   margin-top: 4.5em;
 }
 </style>

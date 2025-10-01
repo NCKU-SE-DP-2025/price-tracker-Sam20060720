@@ -2,14 +2,14 @@
     <div class="wrapper">
         <h1>相關新聞</h1>
         <div class="search-bar">
-            <input v-model="prompt" placeholder="輸入你的搜尋prompt，讓AI幫你找相關的新聞吧！例如：「我想獲取雞蛋價格的資訊」" class="search-input"/>
+            <input v-model="prompt" placeholder="輸入你的搜尋prompt，讓AI幫你找相關的新聞吧！例如：「我想獲取雞蛋價格的資訊」" class="search-input" />
             <i class="bi bi-search" @click="searchNewsBasedOnPrompt"></i>
         </div>
         <div class="content">
             <div v-if="isLoading">loading...</div>
             <div v-else>
-                <NewsItem v-for="(news, index) in newsList" :key="news.id" :news="news" 
-                    @show-dialog="showDialog(news)" @fetch-summary="fetchSummary(news.content, index)"/>
+                <NewsItem v-for="(news, index) in newsList" :key="news.id" :news="news" @show-dialog="showDialog(news)"
+                    @fetch-summary="fetchSummary(news.content, index)" />
                 <div v-if="isEmpty">
                     <p>找不到相關新聞！</p>
                 </div>
@@ -19,57 +19,48 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, onMounted } from 'vue';
 import { useNewsStore } from '@/stores/news';
-import { onMounted } from 'vue';
 import NewsItem from '@/components/NewsItem.vue';
 import NewsDialog from '@/components/NewsDialog.vue';
 
-export default {
-    components: {
-        NewsItem,
-        NewsDialog
-    },
-    data() {
-        return {
-            prompt: '',
-            newsStore: useNewsStore(),
-            selectedNews: null,
-            isDialogVisible: false
-        };
-    },
-    created() {
-        onMounted(() => {
-            this.newsStore.fetchNews();
-        });
-    },
-    computed: {
-        newsList() {
-            return this.newsStore.getNews;
-        },
-        isLoading() {
-            return this.newsStore.isLoading;
-        },
-        isEmpty() {
-            return this.newsStore.newsList.length === 0;
-        }
-    },
-    methods: {
-        searchNewsBasedOnPrompt() {
-            if (this.prompt.trim()) {
-                this.newsStore.promptSearchNews(this.prompt);
-                this.prompt = '';
-            }
-        },
-        showDialog(news) {
-            this.selectedNews = news;
-            this.isDialogVisible = true;
-        },
-        fetchSummary(content, index){
-            this.newsStore.fetchNewsSummary(content, index);
-        }
+const prompt = ref('');
+const newsStore = useNewsStore();
+const selectedNews = ref(null);
+const isDialogVisible = ref(false);
+
+const newsList = computed(() => {
+    return newsStore.getNews;
+});
+
+const isLoading = computed(() => {
+    return newsStore.isLoading;
+});
+
+const isEmpty = computed(() => {
+    return newsStore.newsList.length === 0;
+});
+
+const searchNewsBasedOnPrompt = () => {
+    if (prompt.value.trim()) {
+        newsStore.promptSearchNews(prompt.value);
+        prompt.value = '';
     }
 };
+
+const showDialog = (news) => {
+    selectedNews.value = news;
+    isDialogVisible.value = true;
+};
+
+const fetchSummary = (content, index) => {
+    newsStore.fetchNewsSummary(content, index);
+};
+
+onMounted(() => {
+    newsStore.fetchNews();
+});
 </script>
 
 <style scoped>
@@ -81,19 +72,23 @@ export default {
     box-sizing: border-box;
     width: 100%;
 }
+
 .content {
     background-color: white;
     margin-top: 1em;
     border-radius: 1em;
     padding: 1em 3em;
 }
-.news-item{
+
+.news-item {
     border-bottom: #aaaaaa 1px solid;
 }
-.news-item:last-child{
+
+.news-item:last-child {
     border-bottom: none;
 }
-.search-bar{
+
+.search-bar {
     background-color: white;
     display: inline-flex;
     border-radius: .5em;
@@ -104,7 +99,7 @@ export default {
     width: 80%;
 }
 
-.search-bar input{
+.search-bar input {
     border: none;
     outline: none;
     font-size: .9em;
@@ -113,11 +108,11 @@ export default {
     margin-right: 1em;
 }
 
-.search-bar i{
+.search-bar i {
     cursor: pointer;
 }
 
-.search-bar button:hover{
+.search-bar button:hover {
     cursor: pointer;
 }
 </style>

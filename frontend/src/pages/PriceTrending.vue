@@ -7,7 +7,7 @@
                 <select v-model="selectedCategory">
                     <option disabled value="">請選擇商品類別</option>
                     <option v-for="category in categoryKeys" :key="category" :value="category">{{
-                        categoryName(category)}}</option>
+                        categoryName(category) }}</option>
                 </select>
                 <select v-model="selectedProduct">
                     <option disabled value="">請選擇商品</option>
@@ -22,56 +22,42 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue';
 import { usePricesStore } from '@/stores/prices';
 import Categories from '@/constants/categories';
 import TrendingTable from '@/components/TrendingTable.vue';
 import TrendingChart from '@/components/TrendingChart.vue';
 
-export default {
-    components: {
-        TrendingTable,
-        TrendingChart
-    },
-    data() {
-        return {
-            selectedCategory: '',
-            selectedProduct: '',
-            productList: [],
-        };
-    },
-    computed: {
-        store() {
-            return usePricesStore();
-        },
-        categoryKeys() {
-            return Object.keys(Categories);
-        },
-        products() {
-            return this.selectedCategory ? this.store.getPricesByCategory(this.selectedCategory) : [];
-        },
-    },
-    methods: {
-        categoryName(category) {
-            return Categories[category];
-        }
-    },
-    watch: {
-        selectedCategory() {
-            this.selectedProduct = '';
-            const store = usePricesStore();
-            this.productList = store.getProductList(this.selectedCategory);
-            this.productData = null;
-        },
-        selectedProduct() {
-            console.log(this.selectedProduct);
-        }
-    },
-    created() {
-        const store = usePricesStore();
-        store.fetchPrices();
-    }
+const store = usePricesStore();
+const selectedCategory = ref('');
+const selectedProduct = ref('');
+const productList = ref([]);
+
+const categoryKeys = computed(() => {
+    return Object.keys(Categories);
+});
+
+const products = computed(() => {
+    return selectedCategory.value ? store.getPricesByCategory(selectedCategory.value) : [];
+});
+
+const categoryName = (category) => {
+    return Categories[category];
 };
+
+watch(selectedCategory, () => {
+    selectedProduct.value = '';
+    productList.value = store.getProductList(selectedCategory.value);
+});
+
+watch(selectedProduct, () => {
+    console.log(selectedProduct.value);
+});
+
+onMounted(() => {
+    store.fetchPrices();
+});
 </script>
 
 
@@ -110,7 +96,7 @@ export default {
     appearance: auto !important;
 }
 
-.visualize > * {
+.visualize>* {
     flex: 1 1 50%;
     box-sizing: border-box;
     padding: 1em;

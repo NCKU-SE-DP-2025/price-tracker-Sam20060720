@@ -5,7 +5,7 @@
             <div class="content">
                 <h2>{{ news.title }}</h2>
                 <p class="time">{{ news.time }}</p>
-                <p>原文連結：<a :href="news.url" target="_blank">{{news.url}}</a></p>
+                <p>原文連結：<a :href="news.url" target="_blank">{{ news.url }}</a></p>
                 <p v-for="paragraph, index in formattedContent" :key="index">{{ paragraph }}</p>
             </div>
 
@@ -13,30 +13,31 @@
     </div>
 </template>
 
-<script>
-export default {
-    props: {
-        news: {
-            type: Object,
-            required: true
-        },
-        visible: {
-            type: Boolean,
-            default: false
-        }
+<script setup>
+/* eslint-disable no-undef */
+import { computed } from 'vue';
+
+const props = defineProps({
+    news: {
+        type: Object,
+        required: true
     },
-    methods: {
-        close() {
-            this.$emit('update:visible', false);
-        }
-    },
-    computed:{
-        formattedContent() {
-            if(!this.news.content) return '';
-            return this.news.content.split('\r\n');
-        }
+    visible: {
+        type: Boolean,
+        default: false
     }
+});
+
+const emit = defineEmits(['update:visible']);
+
+const close = () => {
+    emit('update:visible', false);
 };
+
+const formattedContent = computed(() => {
+    if (!props.news.content) return '';
+    return props.news.content.split('\r\n');
+});
 </script>
 
 <style scoped>
@@ -52,24 +53,29 @@ export default {
     border-radius: 8px;
     padding: 3em 4em;
 }
-.content{
+
+.content {
     overflow-y: auto;
     height: 100%;
     text-align: start;
     padding: 3em;
 }
-.time{
+
+.time {
     color: #888;
 }
-.news-dialog h2{
+
+.news-dialog h2 {
     margin: 0;
     font-size: 1.5em;
 }
-.news-dialog p{
+
+.news-dialog p {
     font-size: 1.2em;
     margin: 1em 0;
 }
-.cover{
+
+.cover {
     width: 100%;
     height: 100%;
     display: flex;
@@ -82,7 +88,8 @@ export default {
     content: ' ';
     background-color: rgba(0, 0, 0, 0.5);
 }
-.close-btn{
+
+.close-btn {
     position: absolute;
     top: .5em;
     right: .5em;
