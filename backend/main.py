@@ -449,12 +449,12 @@ async def search_news(request: PromptRequest):
             print(e)
     return sorted(news_list, key=lambda x: x["time"], reverse=True)
 
-class NewsSummaryRequestSchema(BaseModel):
+class NewsSumaryRequestSchema(BaseModel):
     content: str
 
 @app.post("/api/v1/news/news_summary")
 async def news_summary(
-        payload: NewsSummaryRequestSchema, user=Depends(authenticate_user_token)
+        payload: NewsSumaryRequestSchema, user=Depends(authenticate_user_token)
 ):
     response = {}
     messages = [
