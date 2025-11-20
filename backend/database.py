@@ -15,6 +15,12 @@ user_news_association_table = Table(
 )
 
 engine = create_engine("sqlite:///news_database.db", echo=True)
+
+# Import all models to ensure they're registered with Base.metadata
+# This must happen before create_all() is called
+from auth.models import User  # noqa: F401, E402
+from news.models import NewsArticle  # noqa: F401, E402
+
 Base.metadata.create_all(engine)
 
 Session = sessionmaker(bind=engine)
